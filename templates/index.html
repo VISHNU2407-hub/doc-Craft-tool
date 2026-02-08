@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DocCraft – Smart PDF Tool</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="background-animation"></div>
+
+<div class="main-box">
+
+<div class="form-container fade-in">
+
+<div class="logo-area">
+    <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+    <h1 class="tool-name">DocCraft Pro</h1>
+</div>
+
+<p class="tagline">Customize any pdf as your own one</p>
+
+<form method="POST" enctype="multipart/form-data">
+
+<div class="form-group">
+
+<label>Upload Document</label>
+
+<div id="drop-area">
+    <p>Drag & Drop File Here</p>
+    <p>or</p>
+
+    <input type="file" name="file" id="fileElem"  accept=".pdf,.docx" required hidden>
+
+    <button type="button" onclick="document.getElementById('fileElem').click()">
+        Browse File
+    </button>
+
+    <p id="file-name"></p>
+</div>
+
+</div>
+
+<div class="form-group">
+<label>Header Left</label>
+<input type="text" name="header_left" placeholder="Example: Student Name">
+</div>
+
+<div class="form-group">
+<label>Header Right</label>
+<input type="text" name="header_right" placeholder="Example: Roll No">
+</div>
+
+<div class="form-group">
+<label>Center Heading</label>
+<input type="text" name="center" placeholder="Example: Experiment 5">
+</div>
+
+<div class="form-group">
+<label>Footer Left</label>
+<input type="text" name="footer_left" placeholder="Example: Dept: CSE">
+</div>
+
+<div class="form-group">
+<label>Footer Right</label>
+<input type="text" name="footer_right" placeholder="Example: ML Lab">
+</div>
+
+<div class="row">
+
+<div class="half color-box">
+<label>Choose Text Color</label>
+<input type="color" name="color" value="#ff0000">
+</div>
+
+<div class="half">
+<label>Show Page Numbers</label>
+<select name="pageno">
+<option value="no">No</option>
+<option value="yes">Yes</option>
+</select>
+</div>
+
+</div>
+
+<button type="submit" class="pulse">Generate & Download</button>
+
+<p id="status"></p>
+
+<div id="progress-container">
+    <div id="progress-bar"></div>
+</div>
+
+</form>
+
+<div class="footer">
+Built with ❤️ by Bulto
+</div>
+
+</div>
+</div>
+<script>
+
+let dropArea = document.getElementById("drop-area");
+let fileInput = document.getElementById("fileElem");
+let fileName = document.getElementById("file-name");
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, e => {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+});
+
+dropArea.addEventListener("dragover", () => {
+    dropArea.classList.add("highlight");
+});
+
+dropArea.addEventListener("dragleave", () => {
+    dropArea.classList.remove("highlight");
+});
+
+dropArea.addEventListener("drop", (e) => {
+    dropArea.classList.remove("highlight");
+
+    let files = e.dataTransfer.files;
+    fileInput.files = files;
+
+    fileName.innerText = "Selected: " + files[0].name;
+});
+
+fileInput.addEventListener("change", () => {
+    fileName.innerText = "Selected: " + fileInput.files[0].name;
+});
+
+let form = document.querySelector("form");
+let progressContainer = document.getElementById("progress-container");
+let progressBar = document.getElementById("progress-bar");
+let status = document.getElementById("status");
+
+form.addEventListener("submit", function(){
+
+    status.innerText = "Processing... Please wait";
+
+    progressContainer.style.display = "block";
+
+    let width = 0;
+
+    let interval = setInterval(function(){
+
+        if(width >= 100){
+
+            clearInterval(interval);
+
+            // Final actions after progress complete
+            status.innerText = "Edited Successfully!";
+            progressContainer.style.display = "none";
+
+            // Reset form and file name
+            form.reset();
+            fileName.innerText = "";
+
+        } else {
+            width += 10;
+            progressBar.style.width = width + "%";
+        }
+
+    }, 300);
+});
+
+</script>
+
+
+</body>
+</html>
